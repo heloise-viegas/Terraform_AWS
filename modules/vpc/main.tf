@@ -14,13 +14,21 @@ resource "aws_internet_gateway" "igw" {
     Name = "${var.name_prefix}-igw"
   }
 }
+resource "aws_eip" "eip" {
+  for_each = var.public_subnets
+  domain = "vpc"
+  tags = {
+    Name = "${var.name_prefix}-${each.key}-eip"
+  }
+}
 
 resource "aws_nat_gateway" "ngw" {
-  allocation_id = aws_eip.eip.id
-  subnet_id     = aws_subnet.pub-subnet["ap-south-1a"].id
+  for_each = var.public_subnets
+  allocation_id = aws_eip.eip[each.key].id
+  subnet_id     = aws_subnet.pub-subnet[each.key].id
 
   tags = {
-    Name = "${var.name_prefix}-ngw"
+    Name = "${var.name_prefix}-${each.key}-ngw"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -48,13 +56,6 @@ resource "aws_subnet" "priv-subnet" {
   }
 }
 
-resource "aws_eip" "eip" {
-  domain = "vpc"
-  tags = {
-    Name = var.eip_name
-  }
-}
-
 resource "aws_route_table" "public-rt" {
   vpc_id = aws_vpc.vpc.id
 
@@ -75,19 +76,20 @@ resource "aws_route_table_association" "public-rt-assoc" {
 
 
 resource "aws_route_table" "private-rt" {
+  for_each = var.private_subnets
   vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block = "0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.ngw.id
+    nat_gateway_id = aws_nat_gateway.ngw[each.key].id
   }
   tags = {
-    Name = "${var.name_prefix}-private-rt"
+    Name = "${var.name_prefix}-${each.key}-private-rt"
   }
 }
 
 resource "aws_route_table_association" "private-rt-assoc" {
-    for_each = var.private_subnets
+  for_each = var.private_subnets
   subnet_id      = aws_subnet.priv-subnet[each.key].id
-  route_table_id = aws_route_table.private-rt.id
+  route_table_id = aws_route_table.private-rt[each.key].id
 }

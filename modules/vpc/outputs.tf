@@ -20,7 +20,7 @@ output "internet_gateway_id" {
 
 output "nat_gateway_id" {
   description = "ID of the NAT gateway (if created)"
-  value       = aws_nat_gateway.ngw.id
+  value       = [for ngw in aws_nat_gateway.ngw : ngw.id]
 }
 
 output "public_route_table_id" {
@@ -30,5 +30,5 @@ output "public_route_table_id" {
 
 output "private_route_table_id" {
   description = "ID of the private route table"
-  value       = aws_route_table.private-rt.id
+  value       = [for rt in aws_route_table.private-rt : rt.id]
 }

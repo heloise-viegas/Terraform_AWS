@@ -53,8 +53,8 @@ variable "private_subnets" {
 #   default     = true
 # }
 
-variable "eip_name" {
-  description = "Optional Name tag for the EIP."
-  type        = string
-  default     = ""
-}
+# variable "eip_name" {
+#   description = "Optional Name tag for the EIP."
+#   type        = string
+#   default     = ""
+# }
