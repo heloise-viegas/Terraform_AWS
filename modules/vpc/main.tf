@@ -42,6 +42,7 @@ resource "aws_subnet" "pub-subnet" {
 
   tags = {
     Name = "${var.name_prefix}-${each.key}-pubsubnet"
+    "kubernetes.io/role/elb" = "1"
   }
 }
 
@@ -53,6 +54,7 @@ resource "aws_subnet" "priv-subnet" {
 
   tags = {
     Name = "${var.name_prefix}-${each.key}-privsubnet"
+    "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
