@@ -32,3 +32,6 @@ output "cluster_security_group_ids" {
   description = "Security group IDs attached to the cluster VPC config"
   value       = aws_eks_cluster.eks.vpc_config[0].security_group_ids
 }
+output "eks_cluster_autoscaler_arn" {
+  value = aws_iam_role.eks_cluster_autoscaler_role.arn
+}

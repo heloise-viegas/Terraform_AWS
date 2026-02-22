@@ -20,3 +20,46 @@ variable "cluster_version" {
   type        = string
   default     = "1.35"
 }
+
+variable "eks_ng_subnet_ids" {
+  description = "List of subnet IDs to use for the EKS node group"
+  type        = list(string)
+  default     = []
+}
+
+
+variable "node_group_instance_types" {
+  description = "EC2 instance types for the node group"
+  type        = list(string)
+  default     = ["t3.small"]
+}
+
+variable "node_group_desired_size" {
+  description = "Desired number of nodes in the node group"
+  type        = number
+  default     = 1
+}
+
+variable "node_group_max_size" {
+  description = "Maximum number of nodes in the node group"
+  type        = number
+  default     = 2
+}
+
+variable "node_group_min_size" {
+  description = "Minimum number of nodes in the node group"
+  type        = number
+  default     = 1
+}
+
+variable "node_group_update_max_unavailable" {
+  description = "Max unavailable nodes during update for the node group"
+  type        = number
+  default     = 1
+}
+variable "cluster_role_name" {
+  description = "Name of the IAM Role for EKS cluster"
+  type        = string
+  default     = "blue-cluster-role"
+  
+}
