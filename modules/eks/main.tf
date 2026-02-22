@@ -114,6 +114,7 @@ resource "aws_iam_openid_connect_provider" "oidc" {
   url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer
 }
 
+###autoscaler iam role and policy
 data "aws_iam_policy_document" "eks_cluster_autoscaler_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
