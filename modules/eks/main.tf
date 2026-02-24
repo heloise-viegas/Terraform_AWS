@@ -163,3 +163,5 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_autoscaler_attach" {
   role       = aws_iam_role.eks_cluster_autoscaler_role.name
   policy_arn = aws_iam_policy.eks_cluster_autoscaler_policy.arn
 }
+
+##### Note: The above IAM Role and Policy for Cluster Autoscaler is a basic example. In production, you should scope down the permissions as much as possible.

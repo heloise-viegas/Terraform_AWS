@@ -18,20 +18,20 @@ variable "vpc_cidr" {
 
 variable "public_subnets" {
 
-    default ={
-        "ap-south-1a" = "10.0.1.0/24",
-        "ap-south-1b" = "10.0.2.0/24",
-        "ap-south-1c" = "10.0.3.0/24"
-    }
+  default = {
+    "ap-south-1a" = "10.0.1.0/24",
+    "ap-south-1b" = "10.0.2.0/24",
+    "ap-south-1c" = "10.0.3.0/24"
+  }
 }
 
 variable "private_subnets" {
 
-    default ={
-        "ap-south-1a" = "10.0.4.0/24",
-        "ap-south-1b" = "10.0.5.0/24",
-        "ap-south-1c" = "10.0.6.0/24"
-    }
+  default = {
+    "ap-south-1a" = "10.0.4.0/24",
+    "ap-south-1b" = "10.0.5.0/24",
+    "ap-south-1c" = "10.0.6.0/24"
+  }
 }
 
 variable "enable_dns_support" {
@@ -52,14 +52,14 @@ variable "name_prefix" {
   default     = "vpc"
 }
 
-variable "eip_domain" {
-  description = "Domain for the EIP resource"
-  type        = string
-  default     = "vpc"
-}
-variable "ip" {
-  type = string
-}
+# variable "eip_domain" {
+#   description = "Domain for the EIP resource"
+#   type        = string
+#   default     = "vpc"
+# }
+# variable "ip" {
+#   type = string
+# }
 
 # variable "availability_zone" {
 #   description = "Optional availability zone for subnets (empty = provider default)"
