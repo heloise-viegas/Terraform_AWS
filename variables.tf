@@ -79,3 +79,13 @@ variable "cluster_version" {
   default     = "1.35"
 }
 
+variable "aws_account_id" {
+  description = "AWS Account ID for IAM role ARN construction"
+  type        = string
+}
+
+variable "admin_user" {
+  description = "IAM user name to grant EKS admin access"
+  type        = string
+  default     = "devops_user"
+}

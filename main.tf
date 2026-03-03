@@ -20,4 +20,6 @@ module "eks" {
   node_group_max_size               = 2
   node_group_min_size               = 1
   node_group_update_max_unavailable = 1
+  aws_account_id                    = var.aws_account_id
+  admin_user                        = var.admin_user
 }

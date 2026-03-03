@@ -103,6 +103,48 @@ resource "aws_iam_role_policy_attachment" "node_role-AmazonEC2ContainerRegistryR
   role       = aws_iam_role.node_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "node_ssm" {
+  role       = aws_iam_role.node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+##Node Group SG
+# resource "aws_security_group" "NG_SG" {
+#    name        = "${var.name_prefix}-ng-sg"
+#    description = "Security group for EKS Node Group"
+#    vpc_id      = aws_eks_cluster.eks.vpc_config[0].vpc_id
+
+#    tags = {
+#      Name = "${var.name_prefix}-ng-sg"
+#    }
+
+#   # ALB → NodePort
+#   ingress {
+#     description     = "ALB to NodePort"
+#     from_port       = 30000
+#     to_port         = 32767
+#     protocol        = "tcp"
+#     security_groups = [aws_security_group.alb_sg.id]
+#   }
+
+#   # Node-to-node
+#   ingress {
+#     description = "Node to node communication"
+#     from_port   = 0
+#     to_port     = 65535
+#     protocol    = "-1"
+#     self        = true
+#   }
+
+#   # Outbound internet via NAT
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
+
 #########oidc provider
 data "tls_certificate" "tls_certificate" {
   url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
@@ -165,3 +207,19 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_autoscaler_attach" {
 }
 
 ##### Note: The above IAM Role and Policy for Cluster Autoscaler is a basic example. In production, you should scope down the permissions as much as possible.
+#without the below code nodes not visible in devops_user account even though they are connected to the eks, this is because we use API access mode
+# we need to tell EKS that devops user is admin user and can access the cluster, otherwise only the user who created the cluster will have access to it, and in this case, we are creating the cluster with terraform, so the user who runs terraform will have access to the cluster, but we want devops_user to have access to the cluster as well, so we need to add this resource to give devops_user access to the cluster
+resource "aws_eks_access_entry" "admin_user" {
+  cluster_name  = aws_eks_cluster.eks.name
+  principal_arn = "arn:aws:iam::${var.aws_account_id}:user/${var.admin_user}"
+  type          = "STANDARD"
+}
+resource "aws_eks_access_policy_association" "admin_user_policy" {
+  cluster_name  = aws_eks_cluster.eks.name
+  principal_arn = aws_eks_access_entry.admin_user.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+}
