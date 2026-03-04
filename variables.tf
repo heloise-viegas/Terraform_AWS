@@ -89,3 +89,28 @@ variable "admin_user" {
   type        = string
   default     = "devops_user"
 }
+variable "addons" {
+  description = "List of EKS addons to enable"
+  type = list(object({
+    name    = string
+    version = string
+  }))
+  default = [
+    {
+      name    = "kube-proxy"
+      version = "v1.35.0-eksbuild.2"
+    },
+    {
+      name    = "vpc-cni"
+      version = "v1.21.1-eksbuild.3"
+    },
+    {
+      name    = "coredns"
+      version = "v1.13.2-eksbuild.1"
+    },
+    {
+      name    = "aws-ebs-csi-driver"
+      version = "v1.56.0-eksbuild.1"
+    }
+  ]
+}

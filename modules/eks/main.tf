@@ -108,7 +108,7 @@ resource "aws_iam_role_policy_attachment" "node_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-##Node Group SG
+##Node Group SG--in vpcmodule?
 # resource "aws_security_group" "NG_SG" {
 #    name        = "${var.name_prefix}-ng-sg"
 #    description = "Security group for EKS Node Group"
@@ -222,4 +222,13 @@ resource "aws_eks_access_policy_association" "admin_user_policy" {
   access_scope {
     type = "cluster"
   }
+}
+
+#######Addons
+resource "aws_eks_addon" "eks_addon" {
+  for_each= {for addon in var.addons : addon.name => addon} #convert list(object) to map(object) for easier access
+  cluster_name                = aws_eks_cluster.eks.name
+  addon_name                  = each.key
+  addon_version               = each.value.version #e.g., previous version v1.9.3-eksbuild.3 and the new version is v1.10.1-eksbuild.1
+  resolve_conflicts_on_update = "PRESERVE"
 }
