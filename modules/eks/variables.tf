@@ -100,3 +100,13 @@ variable "addons" {
     }
   ]
 }
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-west-2"
+}
+
+variable "vpc_id" {
+  description = "VPC ID where the EKS cluster will be deployed"
+  type        = string
+}

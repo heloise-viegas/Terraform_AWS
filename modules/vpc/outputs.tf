@@ -3,6 +3,11 @@ output "vpc_id" {
   value       = aws_vpc.vpc.id
 }
 
+output "vpc_region" {
+  description = "Region of the VPC"
+  value       = aws_vpc.vpc.region
+}
+
 output "public_subnet_id" {
   description = "ID of the public subnet"
   value       = [for subnet in aws_subnet.pub-subnet : subnet.id]

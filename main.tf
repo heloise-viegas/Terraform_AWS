@@ -23,4 +23,6 @@ module "eks" {
   aws_account_id                    = var.aws_account_id
   admin_user                        = var.admin_user
   addons                            = var.addons
+  region                            = module.vpc.vpc_region
+  vpc_id                            = module.vpc.vpc_id
 }
