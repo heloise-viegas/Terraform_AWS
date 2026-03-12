@@ -26,3 +26,48 @@ module "eks" {
   region                            = module.vpc.vpc_region
   vpc_id                            = module.vpc.vpc_id
 }
+
+
+############### EKS Auth Data Source
+# Generates temporary authentication token for Kubernetes API access
+# Equivalent to running: aws eks get-token
+data "aws_eks_cluster_auth" "eks" {
+  name = module.eks.cluster_name
+}
+
+data "aws_eks_cluster" "eks" {
+  name = module.eks.cluster_name
+}
+############### Kubernetes Provider
+# Allows Terraform to create Kubernetes resources (service accounts etc.)
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+
+  # token generated dynamically using aws_eks_cluster_auth
+  token                  = data.aws_eks_cluster_auth.eks.token
+}
+
+############### Helm Provider
+# Helm provider uses the same Kubernetes connection to install Helm charts
+provider "helm" {
+  kubernetes ={
+    host                   = data.aws_eks_cluster.eks.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.eks.token
+  }
+}
+
+module "eks-ingress-controller" {
+  source                     = "./modules/eks-ingress-controller"
+  aws_account_id             = var.aws_account_id
+  cluster_name               = module.eks.cluster_name
+  cluster_accessible_from_admin_user = module.eks.cluster_accessible_from_admin_user
+  region                     = module.vpc.vpc_region
+  vpc_id                     = module.vpc.vpc_id
+  providers = {
+    kubernetes = kubernetes
+    helm       = helm
+  }
+  depends_on = [ module.eks ]
+}

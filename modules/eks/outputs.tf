@@ -35,3 +35,6 @@ output "cluster_security_group_ids" {
 output "eks_cluster_autoscaler_arn" {
   value = aws_iam_role.eks_cluster_autoscaler_role.arn
 }
+output "cluster_accessible_from_admin_user" {
+  value = aws_eks_access_policy_association.admin_user_policy.id
+}
